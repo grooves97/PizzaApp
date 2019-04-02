@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PizzaApp.Services.Abstract
+namespace PizzaApp.DataAcces
 {
-    interface ITelegramBot
+    class UsersTableDataService
     {
 
     }
