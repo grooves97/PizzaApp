@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace PizzaApp.Models
 {
-    public class Orders
+    public class PizzaOrder
     {
-        public int Id { get; set; }
-        public string Description { get; set; }
-
+        public int? OrderId { get; set; }
+        public int PizzaId { get; set; }
+        public int Count { get; set; }
     }
 }
