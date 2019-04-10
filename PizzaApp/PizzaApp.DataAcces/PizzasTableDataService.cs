@@ -9,21 +9,21 @@ using System.Configuration;
 
 namespace PizzaApp.DataAcces
 {
-    public class UsersTableDataService
+    public class PizzasTableDataService
     {
         private readonly string _connectionString;
         private readonly DbProviderFactory _providerFactory;
 
-        public UsersTableDataService()
+        public PizzasTableDataService()
         {
             _connectionString = ConfigurationManager.ConnectionStrings["appConnection"].ConnectionString;
 
             _providerFactory = DbProviderFactories.GetFactory(ConfigurationManager.ConnectionStrings["appConnection"].ProviderName);
         }
 
-        public List<User> GetAll()
+        public List<Pizza> GetAll()
         {
-            var data = new List<User>();
+            var data = new List<Pizza>();
 
             using (var connection = _providerFactory.CreateConnection())
             using (var command = connection.CreateCommand())
@@ -33,7 +33,7 @@ namespace PizzaApp.DataAcces
                     connection.ConnectionString = _connectionString;
                     connection.Open();
 
-                    command.CommandText = "select * from Users";
+                    command.CommandText = "select * from Pizzas";
 
                     var dataReader = command.ExecuteReader();
 
@@ -41,34 +41,36 @@ namespace PizzaApp.DataAcces
                     {
                         int id = (int)dataReader["Id"];
                         string name = dataReader["Name"].ToString();
-                        string phone = dataReader["Phone"].ToString();
-                        string password = dataReader["Password"].ToString();
+                        string description = dataReader["Description"].ToString();
+                        int price = (int)dataReader["Price"];
 
-                        data.Add(new User
+                        data.Add(new Pizza
                         {
                             Id = id,
                             Name = name,
-                            Phone = phone,
-                            Password = password
+                            Description = description,
+                            Price = price
                         });
                     }
+
                     dataReader.Close();
                 }
-                catch(DbException exception)
+                catch (DbException exception)
                 {
-                    Console.WriteLine($"Error:{exception.Message}");
+                    Console.WriteLine($"Ошибка: {exception.Message}.");
                     throw;
                 }
-                catch(Exception exception)
+                catch (Exception exception)
                 {
-                    Console.WriteLine($"Error:{exception.Message}"):
+                    Console.WriteLine($"Ошибка: {exception.Message}.");
                     throw;
                 }
             }
+
             return data;
         }
 
-        public void Add(User user)
+        public void Add(Pizza pizza)
         {
             using (var connection = _providerFactory.CreateConnection())
             using (var command = connection.CreateCommand())
@@ -79,27 +81,28 @@ namespace PizzaApp.DataAcces
                 {
                     connection.ConnectionString = _connectionString;
                     connection.Open();
+
                     transaction = connection.BeginTransaction();
 
                     command.Transaction = transaction;
-                    command.CommandText = $"insert into Users values(@name, @phone, @password)";
+                    command.CommandText = $"insert into Pizzas values(@name, @description, @price)";
 
                     DbParameter nameParametr = command.CreateParameter();
                     nameParametr.ParameterName = "@name";
                     nameParametr.DbType = System.Data.DbType.String;
-                    nameParametr.Value = user.Name;
+                    nameParametr.Value = pizza.Name;
 
-                    DbParameter phoneNumberParametr = command.CreateParameter();
-                    phoneNumberParametr.ParameterName = "@phonenumber";
-                    phoneNumberParametr.DbType = System.Data.DbType.String;
-                    phoneNumberParametr.Value = user.Phone;
+                    DbParameter descriptionParametr = command.CreateParameter();
+                    descriptionParametr.ParameterName = "@description";
+                    descriptionParametr.DbType = System.Data.DbType.String;
+                    descriptionParametr.Value = pizza.Description;
 
-                    DbParameter passwordParametr = command.CreateParameter();
-                    passwordParametr.ParameterName = "@password";
-                    passwordParametr.DbType = System.Data.DbType.String;
-                    passwordParametr.Value = user.Password;
+                    DbParameter priceParametr = command.CreateParameter();
+                    priceParametr.ParameterName = "@price";
+                    priceParametr.DbType = System.Data.DbType.String;
+                    priceParametr.Value = pizza.Price;
 
-                    command.Parameters.AddRange(new DbParameter[] { nameParametr, phoneNumberParametr, passwordParametr });
+                    command.Parameters.AddRange(new DbParameter[] { nameParametr, descriptionParametr, priceParametr });
 
                     var affectedRows = command.ExecuteNonQuery();
 
@@ -125,7 +128,7 @@ namespace PizzaApp.DataAcces
             }
         }
 
-        public void Delete(int userId)
+        public void Delete(int pizzaId)
         {
             using (var connection = _providerFactory.CreateConnection())
             using (var command = connection.CreateCommand())
@@ -140,14 +143,14 @@ namespace PizzaApp.DataAcces
                     transaction = connection.BeginTransaction();
 
                     command.Transaction = transaction;
-                    command.CommandText = $"delete from Users where id = @userId";
+                    command.CommandText = $"delete from Pizzas where id = @pizzaId";
 
-                    DbParameter userIdParametr = command.CreateParameter();
-                    userIdParametr.ParameterName = "@userId";
-                    userIdParametr.DbType = System.Data.DbType.Int32;
-                    userIdParametr.Value = userId;
+                    DbParameter pizzaIdParametr = command.CreateParameter();
+                    pizzaIdParametr.ParameterName = "@pizzaId";
+                    pizzaIdParametr.DbType = System.Data.DbType.Int32;
+                    pizzaIdParametr.Value = pizzaId;
 
-                    command.Parameters.AddRange(new DbParameter[] { userIdParametr });
+                    command.Parameters.AddRange(new DbParameter[] { pizzaIdParametr });
 
                     var affectedRows = command.ExecuteNonQuery();
 
@@ -172,5 +175,6 @@ namespace PizzaApp.DataAcces
                 }
             }
         }
+
     }
 }

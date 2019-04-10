@@ -48,6 +48,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Authentification.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -56,6 +57,16 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\PizzaApp.DataAcces\PizzaApp.DataAcces.csproj">
+      <Project>{46e0c27f-277d-49bc-8758-d0360341de88}</Project>
+      <Name>PizzaApp.DataAcces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PizzaApp.Models\PizzaApp.Models.csproj">
+      <Project>{79adb269-9060-40bb-b3ac-afc9ade393d5}</Project>
+      <Name>PizzaApp.Models</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
